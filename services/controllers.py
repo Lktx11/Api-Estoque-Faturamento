@@ -1,10 +1,9 @@
-from flask import jsonify
 
 class Controllers:
 
     def Error(mensagem, codigo):
-        jsonify({
+        return{
             "status" : "erro",
             "mensagem" : mensagem,
-        }), codigo
+        }, codigo
         
