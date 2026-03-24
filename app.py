@@ -1,0 +1,13 @@
+from flask import Flask
+from database.models.produtos.produtos import CriarProdutosDB
+from database.models.vendas.vendas import CriarVendasDB
+from database.models.usuarios.usuarios import CriarUsuariosDB
+CriarProdutosDB()
+CriarVendasDB()
+CriarUsuariosDB()
+app = Flask(__name__)
+import routes.routes
+
+
+
+app.run()
