@@ -26,7 +26,7 @@ class Produtos:
                 "status" : "sucesso",
                 "mensagem" : "Produto criado com sucesso",
                 "dados" : dados
-            })
+            }), 201 
         return Controllers.Error(("Este produto ja esta criado!"), 400)
     
     
@@ -47,3 +47,42 @@ class Produtos:
             "status" : "sucesso",
             "dados" : listaProdutos
         })
+        
+    def EditarProduto(dados):
+        if not dados:
+            return Controllers.Error(("JSON nao enviado"),400)
+        if "produto" not in dados:
+            return Controllers.Error(("JSON nao enviado"),400)
+        cursor.execute("SELECT id FROM produtos WHERE produto = ?", (dados['produto'],))
+        resultado = cursor.fetchone()
+        if resultado is None:
+            return Controllers.Error(("Produto nao encontrado!"), 404)
+        
+        if "preco_venda" in dados:
+            cursor.execute("UPDATE produtos SET preco_venda = ? WHERE produto = ?", (dados['preco_venda'], dados['produto']))
+        if "preco_compra" in dados:
+            cursor.execute("UPDATE produtos SET preco_compra = ? WHERE produto = ?", (dados['preco_compra'], dados['produto']))
+        if "estoque" in dados:
+            cursor.execute("UPDATE produtos SET estoque = ? WHERE produto = ?", (dados['estoque'], dados['produto']))
+        conectar.commit()
+        return jsonify({
+            "status" : "sucesso",
+            "mensagem" : "dados alterado com sucesso!"
+        }), 200
+        
+        
+    def DeletarProduto(dados):
+        if not dados:
+            return Controllers.Error(("JSON nao enviado"),400)
+        if 'produto' not in dados:
+            return Controllers.Error(("Produto nao enviado"),400)
+        cursor.execute("SELECT id FROM produtos WHERE produto = ?", (dados['produto'],))
+        resultado = cursor.fetchone()
+        if resultado is None:
+            return Controllers.Error(("Produto nao encontrado!"), 404)
+        cursor.execute("DELETE FROM produtos WHERE produto = ?", (dados['produto'],))
+        conectar.commit()
+        return jsonify({
+            "status" : "sucesso",
+            "mensagem" : f"Produto: {dados['produto']} deletado com sucesso!"
+        }), 200

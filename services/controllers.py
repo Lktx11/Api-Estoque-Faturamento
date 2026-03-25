@@ -22,7 +22,7 @@ class Controllers:
                 return Controllers.error(("Token nao enviado"), 400)
             if token not in token_ativos:
                 return Controllers.Error(("Token invalido"), 401)
-            g.cpfToken = token_ativos[token]
+            g.cpf = token_ativos[token]
 
             return func(*args, **kwargs)
 
