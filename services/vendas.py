@@ -36,3 +36,29 @@ class Vendas:
             "mensagem" : "Venda registrada!"
         })
         
+
+
+    def VerFaturamento():
+        cursorVendas.execute("SELECT total_venda FROM vendas")
+        resultado = cursorVendas.fetchall()
+        
+        i = 0
+        vendaTotais = 0
+        for preco in resultado:
+            vendaTotais += resultado[i][0]
+            i += 1
+        cursorVendas.execute("SELECT produto, quantidade FROM vendas")
+        resultado = cursorVendas.fetchall()
+        gastoTotais = 0
+        i = 0
+        for produto in resultado:
+            produto = resultado[i][0]
+            cursorProdutos.execute("SELECT preco_compra FROM produtos WHERE produto = ?", (produto,))
+            preco_venda = cursorProdutos.fetchone()
+            gastoTotais += resultado[i][1] * preco_venda[0]
+            i += 1
+        faturamento = vendaTotais - gastoTotais
+        return jsonify({
+            "status" : "sucesso",
+            "faturamento" : faturamento 
+        })

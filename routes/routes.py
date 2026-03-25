@@ -60,3 +60,8 @@ def realizarVenda():
     cpf = g.cpf
     realizarVenda = Vendas.RealizarVenda(dados, cpf)
     return realizarVenda
+
+@app.route("/vendas/faturamento", methods=['GET'])
+def verFaturamento():
+    verFaturamento = Vendas.VerFaturamento()
+    return verFaturamento
