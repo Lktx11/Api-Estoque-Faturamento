@@ -1,0 +1,8 @@
+registrar
+
+{
+    "produto" : "Makita",
+    "preco_venda" : 100,
+    "preco_compra" : 50,
+    "estoque" : 10
+}
