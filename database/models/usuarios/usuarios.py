@@ -10,8 +10,7 @@ def CriarUsuariosDB():
                 id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
                 nome TEXT NOT NULL,
                 cpf TEXT NOT NULL UNIQUE,
-                senha TEXT NOT NULL,
-                cargo TEXT NOT NULL
+                senha TEXT NOT NULL
                 )""")
     
     conectar.commit()

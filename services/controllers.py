@@ -1,7 +1,9 @@
-from flask import request,g
+from flask import request,g, json, jsonify
 from functools import wraps
+import time
+from database.models.idempontecy.idempotency_key import conectar
 token_ativos = {}
-
+cursor = conectar.cursor()
 
 class Controllers:
 
@@ -27,4 +29,28 @@ class Controllers:
             return func(*args, **kwargs)
 
 
+        return wrapper
+    
+    
+    def idempotency_key(func):
+        @wraps(func)
+        def wrapper(*args, **kwargs):
+            idempotency = request.headers.get("Idempotency_Key")
+            if idempotency is None:
+                return func(*args, **kwargs)   
+            cursor.execute("SELECT id FROM idempotency WHERE idempotency_key = ?", (idempotency,))
+            resultado = cursor.fetchone()
+            if resultado is None:
+                agora = time.time()         
+                metodo = request.method
+                rota = request.path
+                resposta = func(*args,**kwargs)
+                status_code = resposta[1]
+                cursor.execute("INSERT INTO idempotency (idempotency_key, rota, metodo, status_code, resposta, data_criacao) VALUES (?,?,?,?,?,?)", (idempotency, rota, metodo, status_code, json.dumps(resposta[0].json), agora))
+                return resposta
+            cursor.execute("SELECT status_code, resposta FROM idempotency WHERE idempotency_key = ?", (idempotency,))
+            resposta = cursor.fetchone()
+            dados = json.loads(resposta[1])
+            return jsonify(dados), resposta[0]
+        
         return wrapper

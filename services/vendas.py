@@ -40,8 +40,7 @@ class Vendas:
 
     def VerFaturamento():
         cursorVendas.execute("SELECT total_venda FROM vendas")
-        resultado = cursorVendas.fetchall()
-        
+        resultado = cursorVendas.fetchall()     
         i = 0
         vendaTotais = 0
         for preco in resultado:
@@ -62,3 +61,31 @@ class Vendas:
             "status" : "sucesso",
             "faturamento" : faturamento 
         })
+        
+    def VerVendas(page, limit):
+        offset = (page - 1) * limit
+        vendas = {}
+        cursorVendas.execute("SELECT usuario, produto, total_venda, quantidade FROM vendas LIMIT ? OFFSET ?", (page, offset))
+        resultado = cursorVendas.fetchall()
+        for venda in resultado:
+            usuario, produto, total_venda, quantidade = venda 
+            vendas[produto] = {
+                "Vendido por" : usuario,
+                "Quantidade" : quantidade,
+                "Valor total da venda" : total_venda,
+            }
+        cursorVendas.execute("SELECT COUNT (*) FROM vendas")
+        resultadoQuantidade = cursorVendas.fetchone()
+        total_pages = resultadoQuantidade[0] / limit
+            
+            
+        return jsonify({
+            "status" : "sucesso",
+            "page" : page,
+            "limit" : limit,
+            "total_page" : total_pages,
+            "dados" : vendas
+        })
+        
+        
+        

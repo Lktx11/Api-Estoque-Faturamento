@@ -30,8 +30,12 @@ class Produtos:
         return Controllers.Error(("Este produto ja esta criado!"), 400)
     
     
-    def VerProdutos():
-        cursor.execute("SELECT produto, estoque, preco_venda, preco_compra FROM produtos")
+    def VerProdutos(page, limit):
+        offset = (page - 1) * limit
+        cursor.execute("SELECT COUNT (*) FROM produtos")
+        resultadoQuantidade = cursor.fetchone()
+        total_pages = resultadoQuantidade[0] / limit
+        cursor.execute("SELECT produto, estoque, preco_venda, preco_compra FROM produtos LIMIT ? OFFSET ?", (limit, offset))
         produtos = cursor.fetchall()
         listaProdutos = {}
         for produto in produtos:
@@ -45,6 +49,9 @@ class Produtos:
 
         return jsonify({
             "status" : "sucesso",
+            "page" : page,
+            "limit" : limit,
+            "total_page" : total_pages
             "dados" : listaProdutos
         })
         

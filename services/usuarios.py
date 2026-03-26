@@ -17,7 +17,7 @@ class Usuarios:
         if "senha" not in dados:
             return Controllers.Error(("Senha e necessario"), 400)
         
-        cursor.execute("INSERT INTO usuarios(nome, cpf, senha, cargo) VALUES (?,?,?, ?)", (dados['nome'].capitalize(), dados['cpf'], dados['senha'], dados['cargo']))
+        cursor.execute("INSERT INTO usuarios(nome, cpf, senha, cargo) VALUES (?,?,?, ?)", (dados['nome'].capitalize(), dados['cpf'], dados['senha']))
         conectar.commit()
         return jsonify({
             "status" : "sucesso",

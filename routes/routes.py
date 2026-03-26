@@ -7,7 +7,7 @@ from services.vendas import Vendas
 
 #usuarios
 @app.route("/registrar", methods=['POST'])
-@Controllers.token_required
+
 def Registrar():
     dados = request.get_json()
     registrar = Usuarios.Registrar(dados)
@@ -31,7 +31,9 @@ def criarProduto():
 @app.route("/produtos", methods=['GET'])
 @Controllers.token_required
 def verProdutos():
-    produtos = Produtos.VerProdutos()
+    page = int(request.args.get("page", 1))
+    limit = int(request.args.get("limit", 10))
+    produtos = Produtos.VerProdutos(page, limit)
     return produtos
 
 @app.route("/produtos", methods=['PUT'])
@@ -55,6 +57,7 @@ def deletarProduto():
 
 @app.route("/vendas", methods=['POST'])
 @Controllers.token_required
+@Controllers.idempotency_key
 def realizarVenda():
     dados = request.get_json()
     cpf = g.cpf
@@ -62,6 +65,16 @@ def realizarVenda():
     return realizarVenda
 
 @app.route("/vendas/faturamento", methods=['GET'])
+@Controllers.token_required
 def verFaturamento():
     verFaturamento = Vendas.VerFaturamento()
     return verFaturamento
+
+
+@app.route("/vendas", methods=['GET'])
+@Controllers.token_required
+def verVendas():
+    page = int(request.args.get("page", 1))
+    limit = int(request.args.get("limit", 10))
+    verVendas = Vendas.VerVendas(page, limit)
+    return verVendas
