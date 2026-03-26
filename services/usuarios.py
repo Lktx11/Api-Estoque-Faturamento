@@ -6,7 +6,6 @@ cursor = conectar.cursor()
 
 
 class Usuarios:
-
     def Registrar(dados):
         if not dados:
             return Controllers.Error(("JSON nao enviado"), 400)
@@ -16,31 +15,30 @@ class Usuarios:
             return Controllers.Error(("Cpf e necessario"), 400)
         if "senha" not in dados:
             return Controllers.Error(("Senha e necessario"), 400)
-        
-        cursor.execute("INSERT INTO usuarios(nome, cpf, senha, cargo) VALUES (?,?,?, ?)", (dados['nome'].capitalize(), dados['cpf'], dados['senha']))
+        cursor.execute("INSERT INTO usuarios(nome, cpf, senha, cargo) VALUES (?,?,?, ?)", (dados['nome'], dados['cpf'], dados['senha']))
         conectar.commit()
         return jsonify({
             "status" : "sucesso",
             "mensagem" : "Usuario criado com sucesso"
-        })
+        }), 201
     
     def Login(dados):
         if not dados:
-            return Controllers.Error(("JSON nao enviado"), 401)
+            return Controllers.Error(("JSON nao enviado"), 400)
         if "cpf" not in dados:
             return Controllers.Error(("Cpf e necessario"), 400)
         if "senha" not in dados:
             return Controllers.Error(("Senha e necessario"), 400)
         cursor.execute("SELECT senha FROM usuarios WHERE cpf = ?", (dados["cpf"],))
-        resultado = cursor.fetchone()
-        if resultado is None:
+        resultado_senha = cursor.fetchone()
+        if resultado_senha is None:
             return Controllers.Error(("Usuario nao encontrado"), 404)
-        if dados["senha"] != resultado[0]:
+        if dados["senha"] != resultado_senha[0]: #0 = Senha
             return Controllers.Error(("Senha incorreta"), 401)
-        token = dados["cpf"] + dados["senha"]
-        token_ativos[token] = dados['cpf'] 
+        token_usuario = dados["cpf"] + dados["senha"]
+        token_ativos[token_usuario] = dados['cpf'] 
         return jsonify({
             "status" : "sucesso",
             "mensagem" : "Usuario logado com sucesso",
-            "token" : token
-        })
+            "token" : token_usuario
+        }), 200

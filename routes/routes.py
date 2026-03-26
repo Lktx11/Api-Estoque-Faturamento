@@ -8,13 +8,13 @@ from services.vendas import Vendas
 #usuarios
 @app.route("/registrar", methods=['POST'])
 
-def Registrar():
+def registrar_usuario():
     dados = request.get_json()
     registrar = Usuarios.Registrar(dados)
     return registrar
 
 @app.route("/login", methods=['POST'])
-def Login():
+def login():
     dados = request.get_json()
     login = Usuarios.Login(dados)
     return login
@@ -23,14 +23,14 @@ def Login():
 
 @app.route("/produtos/cadastrar", methods=['POST'])
 @Controllers.token_required
-def criarProduto():
+def criar_produto():
     dados = request.get_json()
     registroProduto = Produtos.CriarProduto(dados)
     return registroProduto
 
 @app.route("/produtos", methods=['GET'])
 @Controllers.token_required
-def verProdutos():
+def ver_produtos():
     page = int(request.args.get("page", 1))
     limit = int(request.args.get("limit", 10))
     produtos = Produtos.VerProdutos(page, limit)
@@ -38,14 +38,14 @@ def verProdutos():
 
 @app.route("/produtos", methods=['PUT'])
 @Controllers.token_required
-def editarProduto():
+def editar_produtos():
     dados = request.get_json()
     editarProduto = Produtos.EditarProduto(dados)
     return editarProduto
 
 @app.route("/produtos", methods=['DELETE'])
 @Controllers.token_required
-def deletarProduto():
+def deletar_protudo():
     dados = request.get_json()
     deletarProduto = Produtos.DeletarProduto(dados)
     return deletarProduto
@@ -58,7 +58,7 @@ def deletarProduto():
 @app.route("/vendas", methods=['POST'])
 @Controllers.token_required
 @Controllers.idempotency_key
-def realizarVenda():
+def registrar_venda():
     dados = request.get_json()
     cpf = g.cpf
     realizarVenda = Vendas.RealizarVenda(dados, cpf)
@@ -66,14 +66,14 @@ def realizarVenda():
 
 @app.route("/vendas/faturamento", methods=['GET'])
 @Controllers.token_required
-def verFaturamento():
+def ver_faturamento():
     verFaturamento = Vendas.VerFaturamento()
     return verFaturamento
 
 
 @app.route("/vendas", methods=['GET'])
 @Controllers.token_required
-def verVendas():
+def ver_vendas():
     page = int(request.args.get("page", 1))
     limit = int(request.args.get("limit", 10))
     verVendas = Vendas.VerVendas(page, limit)
