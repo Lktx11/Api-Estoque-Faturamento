@@ -78,3 +78,5 @@ def ver_vendas():
     limit = int(request.args.get("limit", 10))
     verVendas = Vendas.VerVendas(page, limit)
     return verVendas
+
+

@@ -1,5 +1,5 @@
 from services.controllers import Controllers
-from flask import jsonify
+from flask import jsonify, g
 from database.models.vendas.vendas import conectar as vendas
 from database.models.produtos.produtos import conectar as produtos
 
@@ -33,7 +33,7 @@ class Vendas:
         vendas.commit()
         return jsonify({
             "status" : "sucesso",
-            "mensagem" : "Venda registrada!"
+            "mensagem" : "Venda registrada!",
         }), 200
         
 
