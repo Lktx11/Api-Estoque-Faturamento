@@ -19,7 +19,7 @@ class Usuarios:
         checar_cpf_existe = cursor.fetchone()
         if checar_cpf_existe is not None:
             return Controllers.Error(("Esse cpf ja esta registrado!"), 400)
-        cursor.execute("INSERT INTO usuarios(nome, cpf, senha) VALUES (?,?,?)", (dados['nome'], dados['cpf'], dados['senha']))
+        cursor.execute("INSERT INTO usuarios(nome, cpf, senha, cargo) VALUES (?,?,?, ?)", (dados['nome'], dados['cpf'], dados['senha'], "funcionario"))
         conectar.commit()
         return jsonify({
             "status" : "sucesso",
@@ -44,4 +44,25 @@ class Usuarios:
             "status" : "sucesso",
             "mensagem" : "Usuario logado com sucesso",
             "token" : token_usuario
+        }), 200
+        
+        
+    def editarUsuario(dados):
+        if not dados:
+            return Controllers.Error(("Json não enviado!"), 400)
+        if "cpf" not in dados:
+            return Controllers.Error(("Cpf do usuario nao enviado!"), 400)
+        cursor.execute("SELECT id FROM usuarios WHERE cpf = ?", (dados['cpf'],))
+        usuario_id = cursor.fetchone()
+        if usuario_id is None:
+            return Controllers.Error(("Usuario nao encontrado!"), 404)
+        if "cargo" in dados:
+            cursor.execute("UPDATE usuarios SET cargo = ? WHERE cpf = ?", (dados['cargo'], dados['cpf']))
+        if "senha" in dados:
+            cursor.execute("UPDATE usuarios SET senha = ? WHERE cpf = ?", (dados['senha'], dados['cpf']))
+            
+        conectar.commit()
+        return jsonify({
+            "status" : "sucesso",
+            "mensagem" : "Dados alterados com sucesso!"
         }), 200

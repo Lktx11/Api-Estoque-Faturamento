@@ -18,6 +18,13 @@ def postLogin():
     dados = request.get_json()
     login = Usuarios.Login(dados)
     return login
+
+@app.route("/usuarios", methods=['PUT'])
+def editarUsuario():
+    dados = request.get_json()
+    editar_dados_usuario = Usuarios.editarUsuario(dados)
+    return editar_dados_usuario
+    
 #produtos
 @app.route("/produtos/cadastrar", methods=['POST'])
 @Controllers.token_required
@@ -28,7 +35,7 @@ def postProduto():
 
 @app.route("/produtos", methods=['GET'])
 @Controllers.token_required
-def getProdutos():
+def getProdutos():  
     page = int(request.args.get("page", 1))
     limit = int(request.args.get("limit", 10))
     produtos = Produtos.VerProdutos(page, limit)
